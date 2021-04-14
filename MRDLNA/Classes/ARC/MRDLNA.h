@@ -9,6 +9,7 @@
 #import "CLUPnP.h"
 #import "CLUPnPDevice.h"
 
+@class MRDLNA;
 @protocol DLNADelegate <NSObject>
 
 @optional
@@ -17,7 +18,8 @@
  @param devicesArray <CLUPnPDevice *> 搜索到的设备
  */
 - (void)searchDLNAResult:(NSArray *)devicesArray;
-
+- (void)mrDidStartSearch:(MRDLNA *)mrdlna;
+- (void)mrDidStopSearch:(MRDLNA *)mrdlna;
 
 /**
  投屏成功开始播放

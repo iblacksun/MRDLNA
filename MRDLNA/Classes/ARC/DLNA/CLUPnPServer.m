@@ -80,6 +80,9 @@
         [self onError:error];
     }
     [self search];
+    if ([self.delegate respondsToSelector:@selector(didStartSearch)]) {
+        [self.delegate didStartSearch];
+    }
 }
 
 - (void)stop{
@@ -107,6 +110,9 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(weakSelf.searchTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         weakSelf.receiveDevice = NO;
         CLLog(@"搜索结束");
+        if ([weakSelf.delegate respondsToSelector:@selector(didStopSearch)]) {
+            [weakSelf.delegate didStopSearch];
+        }
     });
 }
 
@@ -211,6 +217,9 @@ withFilterContext:(nullable id)filterContext{
     if (self.delegate && [self.delegate respondsToSelector:@selector(upnpSearchErrorWithError:)]) {
         [self.delegate upnpSearchErrorWithError:error];
     }
+//    if ([self.delegate respondsToSelector:@selector(didStopSearch)]) {
+//        [self.delegate didStopSearch];
+//    }
 }
 
 #pragma mark -

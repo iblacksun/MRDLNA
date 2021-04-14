@@ -17,6 +17,8 @@
  @param devices 设备数组
  */
 - (void)upnpSearchChangeWithResults:(NSArray <CLUPnPDevice *>*)devices;
+- (void)didStartSearch;
+- (void)didStopSearch;
 
 @optional
 /**

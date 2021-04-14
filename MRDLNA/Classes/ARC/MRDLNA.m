@@ -157,6 +157,18 @@
 //    NSLog(@"DLNA_Error======>%@", error);
 }
 
+- (void)didStartSearch {
+    if ([self.delegate respondsToSelector:@selector(mrDidStartSearch:)]) {
+        [self.delegate mrDidStartSearch: self];
+    }
+}
+
+- (void)didStopSearch {
+    if ([self.delegate respondsToSelector:@selector(mrDidStopSearch:)]) {
+        [self.delegate mrDidStopSearch: self];
+    }
+}
+
 #pragma mark - CLUPnPResponseDelegate
 - (void)upnpSetAVTransportURIResponse{
     [self.render play];
@@ -180,4 +192,5 @@
     _searchTime = searchTime;
     self.upd.searchTime = searchTime;
 }
+
 @end
