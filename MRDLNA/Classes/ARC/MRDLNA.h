@@ -8,7 +8,19 @@
 #import <Foundation/Foundation.h>
 #import "CLUPnP.h"
 #import "CLUPnPDevice.h"
+typedef enum : NSUInteger {
+    DLNAStatePlay,
+    DLNAStatePause,
+    DLNAStateStop,
+} DLNAState;
 
+typedef enum : NSUInteger {
+    DLNAEventSeek,
+    DLNAEventPrevious,
+    DLNAEventNext,
+    DLNAEventNextURI,
+    DLNAEventVolume,
+} DLNAEvent;
 @class MRDLNA;
 @protocol DLNADelegate <NSObject>
 
@@ -20,13 +32,16 @@
 - (void)searchDLNAResult:(NSArray *)devicesArray;
 - (void)mrDidStartSearch:(MRDLNA *)mrdlna;
 - (void)mrDidStopSearch:(MRDLNA *)mrdlna;
-
+- (void)mrDLNA:(MRDLNA*)mdrlna event:(DLNAEvent)event;
+- (void)mrDLNA:(MRDLNA*)mdrlna state:(DLNAState)state;
 /**
  投屏成功开始播放
  */
 - (void)dlnaStartPlay;
 
 @end
+
+
 
 @interface MRDLNA : NSObject
 
@@ -38,6 +53,7 @@
 
 @property(nonatomic,assign) NSInteger searchTime;
 
+@property (nonatomic, assign) DLNAState state;
 /**
  单例
  */
@@ -87,4 +103,9 @@
  播放切集
  */
 - (void)playTheURL:(NSString *)url;
+/**
+ 获取播放进度 切记在回调执行后再执行下一次获取进度的操作
+ */
+- (void)getSeekTime:(void (^)(CLUPnPAVPositionInfo *)) block;
+
 @end

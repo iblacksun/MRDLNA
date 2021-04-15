@@ -17,6 +17,7 @@
 @property(nonatomic,copy) NSString *volume;
 @property(nonatomic,assign) NSInteger seekTime;
 @property(nonatomic,assign) BOOL isPlaying;
+@property (nonatomic, copy) void (^getSeekTimeBlock)(CLUPnPAVPositionInfo *);
 
 @end
 
@@ -172,6 +173,57 @@
 #pragma mark - CLUPnPResponseDelegate
 - (void)upnpSetAVTransportURIResponse{
     [self.render play];
+    if ([self.delegate respondsToSelector:@selector(mrDLNA:event:)]) {
+        [self.delegate mrDLNA:self event:DLNAEventNextURI];
+    }
+}
+
+- (void)upnpPreviousResponse {
+    if ([self.delegate respondsToSelector:@selector(mrDLNA:event:)]) {
+        [self.delegate mrDLNA:self event:DLNAEventPrevious];
+    }
+}
+
+- (void)upnpNextResponse {
+    if ([self.delegate respondsToSelector:@selector(mrDLNA:event:)]) {
+        [self.delegate mrDLNA:self event:DLNAEventNext];
+    }
+}
+
+- (void)upnpSeekResponse {
+    if ([self.delegate respondsToSelector:@selector(mrDLNA:event:)]) {
+        [self.delegate mrDLNA:self event:DLNAEventSeek];
+    }
+}
+
+- (void)upnpSetVolumeResponse {
+    if ([self.delegate respondsToSelector:@selector(mrDLNA:event:)]) {
+        [self.delegate mrDLNA:self event:DLNAEventVolume];
+    }
+}
+
+- (void)upnpPlayResponse {
+    self.state = DLNAStatePlay;
+    if ([self.delegate respondsToSelector:@selector(dlnaStartPlay)]) {
+        [self.delegate dlnaStartPlay];
+    }
+    if ([self.delegate respondsToSelector:@selector(mrDLNA:state:)]) {
+        [self.delegate mrDLNA:self state:self.state];
+    }
+}
+
+- (void)upnpStopResponse {
+    self.state = DLNAStateStop;
+    if ([self.delegate respondsToSelector:@selector(mrDLNA:state:)]) {
+        [self.delegate mrDLNA:self state:self.state];
+    }
+}
+
+- (void)upnpPauseResponse {
+    self.state = DLNAStatePause;
+    if ([self.delegate respondsToSelector:@selector(mrDLNA:state:)]) {
+        [self.delegate mrDLNA:self state:self.state];
+    }
 }
 
 - (void)upnpGetTransportInfoResponse:(CLUPnPTransportInfo *)info{
@@ -180,11 +232,9 @@
         [self.render play];
     }
 }
-
-- (void)upnpPlayResponse{
-    if ([self.delegate respondsToSelector:@selector(dlnaStartPlay)]) {
-        [self.delegate dlnaStartPlay];
-    }
+- (void)upnpGetPositionInfoResponse:(CLUPnPAVPositionInfo *)info {
+    !self.getSeekTimeBlock ? : self.getSeekTimeBlock(info);
+    self.getSeekTimeBlock = nil;
 }
 
 #pragma mark Set&Get
@@ -192,5 +242,11 @@
     _searchTime = searchTime;
     self.upd.searchTime = searchTime;
 }
+
+- (void)getSeekTime:(void (^)(CLUPnPAVPositionInfo *))block {
+    self.getSeekTimeBlock = block;
+    [self.render getPositionInfo];
+}
+
 
 @end
