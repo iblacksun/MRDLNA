@@ -14,7 +14,7 @@
 @property(nonatomic,strong) NSMutableArray *dataArray;
 
 @property(nonatomic,strong) CLUPnPRenderer *render;         //MDR渲染器
-@property(nonatomic,copy) NSString *volume;
+@property(nonatomic,copy) NSString *volumeValue;
 @property(nonatomic,assign) NSInteger seekTime;
 @property(nonatomic,assign) BOOL isPlaying;
 @property (nonatomic, copy) void (^getSeekTimeBlock)(CLUPnPAVPositionInfo *);
@@ -105,8 +105,15 @@
  设置音量
  */
 - (void)volumeChanged:(NSString *)volume{
-    self.volume = volume;
+    self.volumeValue = volume;
     [self.render setVolumeWith:volume];
+}
+
+- (void)setVolume:(NSInteger)volume {
+    _volume = volume;
+    NSInteger value = MAX(0, MIN(volume, 100));
+    NSString *strValue = [NSString stringWithFormat:@"%ld", value];
+    [self volumeChanged:strValue];
 }
 
 
@@ -207,8 +214,9 @@
 }
 
 - (void)upnpGetVolumeResponse:(NSString *)volume {
-    self.volume = volume;
-    NSLog(@"volume %@", volume);
+    self.volumeValue = volume;
+    NSInteger value = volume.integerValue;
+    _volume = value;
     if ([self.delegate respondsToSelector:@selector(mrDLNA:event:)]) {
         [self.delegate mrDLNA:self event:DLNAEventVolume];
     }

@@ -89,10 +89,7 @@ typedef enum : NSUInteger {
  */
 - (void)dlnaPause;
 
-/**
- 设置音量 volume建议传0-100之间字符串
- */
-- (void)volumeChanged:(NSString *)volume;
+- (void)volumeChanged:(NSString *)volume DEPRECATED_MSG_ATTRIBUTE("直接使用volume");
 
 /**
  设置播放进度 seek单位是秒
@@ -108,6 +105,6 @@ typedef enum : NSUInteger {
  */
 - (void)getSeekTime:(void (^)(CLUPnPAVPositionInfo *)) block;
 
-/// 获取音量
-- (void)getVolume;
+///  音量  设置音量 volume建议传0-100
+@property (nonatomic, assign) NSInteger volume;
 @end
