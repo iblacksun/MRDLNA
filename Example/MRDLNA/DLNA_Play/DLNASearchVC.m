@@ -50,6 +50,10 @@
 
 - (void)dlnaStartPlay{
     NSLog(@"投屏成功 开始播放");
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.dlnaManager getVolume];
+    });
+    
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{

@@ -139,6 +139,10 @@
     [self.render setAVTransportURL:url];
 }
 
+- (void)getVolume {
+    [self.render getVolume];
+}
+
 #pragma mark -- 搜索协议CLUPnPDeviceDelegate回调
 - (void)upnpSearchChangeWithResults:(NSArray<CLUPnPDevice *> *)devices{
     NSMutableArray *deviceMarr = [NSMutableArray array];
@@ -202,6 +206,14 @@
     }
 }
 
+- (void)upnpGetVolumeResponse:(NSString *)volume {
+    self.volume = volume;
+    NSLog(@"volume %@", volume);
+    if ([self.delegate respondsToSelector:@selector(mrDLNA:event:)]) {
+        [self.delegate mrDLNA:self event:DLNAEventVolume];
+    }
+}
+
 - (void)upnpPlayResponse {
     self.state = DLNAStatePlay;
     if ([self.delegate respondsToSelector:@selector(dlnaStartPlay)]) {
@@ -210,6 +222,7 @@
     if ([self.delegate respondsToSelector:@selector(mrDLNA:state:)]) {
         [self.delegate mrDLNA:self state:self.state];
     }
+    [self.render getVolume];
 }
 
 - (void)upnpStopResponse {

@@ -108,4 +108,6 @@ typedef enum : NSUInteger {
  */
 - (void)getSeekTime:(void (^)(CLUPnPAVPositionInfo *)) block;
 
+/// 获取音量
+- (void)getVolume;
 @end
